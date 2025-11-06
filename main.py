@@ -8,14 +8,14 @@ st.set_page_config(page_title="Dashboard com Streamlit", layout="wide")
 
 st.title("📊 Dashboard")
 st.sidebar.header("Configurações")                                                          # Selecionar pasta onde estão os bancos
-folder = st.sidebar.text_input("Caminho da pasta com os bancos de dados:", value="./dados") # Caixa de seleção de pasta (usuário digita ou escolhe)
+folder = st.sidebar.text_input("Caminho da pasta com os bancos de dados:", value="/tmp")    # Caixa de seleção de pasta (usuário digita ou escolhe)
 if os.path.isdir(folder):                                                                   # Listar bancos disponíveis
-    db_files = [f for f in os.listdir(folder)]
+    db_files = [f for f in os.listdir(folder) if f.startswith('xapp_db_')]
 else:
     db_files = []
-    st.warning('Caminho não encontrado ou pasta vazia.', icon="⚠️")
+    st.warning('Caminho não encontrado ou pasta não tem um banco de dados com inicio "xapp_db_".', icon="⚠️")
 
-if (len(db_files) != 0):
+if db_files:
     db_selected = st.sidebar.selectbox("Selecione o banco de dados:", db_files)             # Escolher banco
     try:
         db_path = os.path.join(folder, db_selected)
