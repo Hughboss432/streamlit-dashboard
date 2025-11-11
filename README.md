@@ -1,25 +1,25 @@
 # streamlit-dashboard
 
-Esse projeto é uma dashboard simples para visualizar dados em um banco de dados sql utilizando Streamlit.
+This project is a dashboard for simple visualization of data in a SQL database using the Streamlit framework.
 
 ---
 
-## 1 ▪ Clone o repositório e instale as dependências
+## 1 ▪ Clone the repository and install the dependencies
 
 ```bash
 git clone https://github.com/Hughboss432/streamlit-dashboard.git
 cd streamlit-dashboard
 
-# ambiente virtual recomendado
+# virtual environment
 python3 -m venv .venv && source .venv/bin/activate
 
-# via pip (ou poetry install)
+# pip install dependencies
 pip install -r requirements.txt
 ```
 
 ---
 
-## 2 ▪ Execute a aplicação Streamlit
+## 2 ▪ Run the Streamlit application
 
 ```bash
 streamlit run main.py
@@ -27,6 +27,6 @@ streamlit run main.py
 
 ---
 
-## Licença
+## License
 
 MIT
