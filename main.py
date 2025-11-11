@@ -21,8 +21,8 @@ def plot_graph(df, num_cols, num_plots):                                        
                 name=y_list[i]
             )
         )
-
     st.plotly_chart(dashboard)
+    st.info('To hide a subgraph, click on the label of the line you want to hide!', icon="ℹ️")
 
 st.set_page_config(page_title="Dashboard with Streamlit", layout="wide")
 st.title("📊 Dashboard")
