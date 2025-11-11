@@ -2,7 +2,27 @@ import os
 import sqlite3
 import pandas as pd
 import streamlit as st
-import plotly.express as px
+import plotly.graph_objects as go
+
+def plot_graph(df, num_cols, num_plots):                                                     # Plot and config graphs
+    st.sidebar.write("---") 
+    x_col = st.sidebar.selectbox("Axis X:", num_cols)
+    y_list = [
+        st.sidebar.selectbox(f"Axis Y - {i+1}:", num_cols) for i in range(num_plots)
+    ]
+
+    dashboard = go.Figure()
+    for i in range(num_plots):
+        dashboard.add_trace(
+            go.Scatter(
+                x=df[x_col],
+                y=df[y_list[i]],
+                mode='lines',
+                name=y_list[i]
+            )
+        )
+
+    st.plotly_chart(dashboard)
 
 st.set_page_config(page_title="Dashboard with Streamlit", layout="wide")
 st.title("📊 Dashboard")
@@ -14,7 +34,7 @@ if os.path.isdir(folder):                                                       
 else:
     db_files = []
     st.warning('Path not found or folder does not have a database starting with "xapp_db_".', icon="⚠️")
-
+# ------
 if db_files:
     st.sidebar.write('---')
     db_selected = st.sidebar.selectbox("Select the database:", db_files)                    # Choose bd
@@ -37,13 +57,14 @@ if db_files:
             st.dataframe(df)
 
             num_cols = df.select_dtypes(include=["number"]).columns.tolist()
+            num_plots = st.sidebar.select_slider(
+                "Select the number of plots",
+                options=[1,2,3,4,5,6,7,8,9,10]
+            )
+            # --------
             st.write('---')
             if len(num_cols) >= 2:                                                          # Select columns for the plot
-                x_col = st.selectbox("Axis X:", num_cols)
-                y_col = st.selectbox("Axis Y:", num_cols, index=min(1, len(num_cols)-1))
-
-                fig = px.scatter(df, x=x_col, y=y_col, title=f"{y_col} vs {x_col}")
-                st.plotly_chart(fig)
+                plot_graph(df,num_cols,num_plots)
             else:
                 st.info("The table needs to have at least two numerical columns to plot a graph.")
     except:
