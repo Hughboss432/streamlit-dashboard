@@ -4,12 +4,32 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 
-def plot_graph(df, num_cols, num_plots):                                                     # Plot and config graphs
-    st.sidebar.write("---") 
+if ('is_alive' not in st.session_state):
+    st.session_state['is_alive'] = 0
+    
+def plot_graph(df, num_cols, num_plots):                                                    # Plot and config graphs
+    st.sidebar.write("---")
+    
     x_col = st.sidebar.selectbox("Axis X:", num_cols)
     y_list = [
         st.sidebar.selectbox(f"Axis Y - {i+1}:", num_cols) for i in range(num_plots)
     ]
+
+    if st.button("Refresh"):
+        new_len = len(df[y_list[0]])
+        old_len = st.session_state['is_alive']
+        st.session_state['is_alive'] = new_len
+
+        if new_len > old_len:
+            with st.status("Checking status...", expanded=False):
+                st.success("The application is Alive!")
+                st.caption(f"Total of metrics: {new_len} — Old metrics: {old_len}")
+        elif new_len < old_len:
+            st.warning("New database detected. Please refresh again.")
+            st.caption(f"Total of metrics: {new_len} — Old metrics: {old_len}")
+        else:
+            st.error("The application is Dead.")
+            st.caption(f"Total of metrics: {new_len} — Old metrics: {old_len}")
 
     dashboard = go.Figure()
     for i in range(num_plots):
@@ -30,13 +50,12 @@ st.sidebar.header("Settings")                                                   
 folder = st.sidebar.text_input("Directory path containing the database:", value="/tmp")     # Folder selection box (user types or chooses)
 
 if os.path.isdir(folder):                                                                   # List available db's
-    db_files = [f for f in os.listdir(folder) if f.startswith('xapp_db_')]
+    db_files = [f for f in os.listdir(folder) if f.startswith('xapp_db_') and (not f.endswith('-shm')) and (not f.endswith('-wal'))]
 else:
     db_files = []
     st.warning('Path not found or folder does not have a database starting with "xapp_db_".', icon="⚠️")
 # ------
 if db_files:
-    st.sidebar.write('---')
     db_selected = st.sidebar.selectbox("Select the database:", db_files)                    # Choose bd
     try:
         db_path = os.path.join(folder, db_selected)
@@ -47,6 +66,7 @@ if db_files:
         if not tables_list:                                                                 # db is empty
             st.error("No tables detected in this database.")
         else:
+            st.sidebar.write('---')
             table_selected = st.sidebar.selectbox("Select table:", tables_list)
 
             query = f"SELECT * FROM {table_selected}"                                       # Save dataframe
@@ -59,7 +79,7 @@ if db_files:
             num_cols = df.select_dtypes(include=["number"]).columns.tolist()
             num_plots = st.sidebar.select_slider(
                 "Select the number of plots",
-                options=[1,2,3,4,5,6,7,8,9,10]
+                options=[i+1 for i in range(len(num_cols)+1)]
             )
             # --------
             st.write('---')
