@@ -15,6 +15,18 @@ def plot_graph(df, num_cols, num_plots):                                        
         st.sidebar.selectbox(f"Axis Y - {i+1}:", num_cols) for i in range(num_plots)
     ]
 
+    # parte não funcionando
+    if len(df[x_col])<5000:
+        nval = st.select_slider(                                                                
+            "Select the number of plots",
+            options=[i+1 for i in range(len(df[x_col]))]
+        )
+    else:
+        nval = st.select_slider(                                                                
+            "Select the number of plots",
+            options=[i+1 for i in range(10000)]
+        )
+
     if st.button("Refresh"):                                                                # Test new lines in the db 
         new_len = len(df[y_list[0]])
         old_len = st.session_state['is_alive']
@@ -35,8 +47,8 @@ def plot_graph(df, num_cols, num_plots):                                        
     for i in range(num_plots):
         dashboard.add_trace(
             go.Scatter(
-                x=df[x_col],
-                y=df[y_list[i]],
+                x=df[x_col].tail(nval),
+                y=df[y_list[i]].tail(nval),
                 mode='lines',
                 name=y_list[i]
             )
@@ -90,5 +102,5 @@ if db_files:
                 plot_graph(df,num_cols,num_plots)
             else:
                 st.info("The table needs to have at least two numerical columns to plot a graph.")
-    except:
-        st.error('A file is not a database.', icon="🚨")
+    except Exception as e:
+        st.error(f'A file is not a database.{e}', icon="🚨")
