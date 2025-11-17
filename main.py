@@ -4,10 +4,10 @@ import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
 
-if ('is_alive' not in st.session_state):
+if ('is_alive' not in st.session_state):                                                    # Init state
     st.session_state['is_alive'] = 0
     
-def plot_graph(df, num_cols, num_plots):                                                    # Plot and config graphs
+def plot_graph(df, num_cols, num_plots):                                                    # Plot and Refresh
     st.sidebar.write("---")
     
     x_col = st.sidebar.selectbox("Axis X:", num_cols)
@@ -15,16 +15,16 @@ def plot_graph(df, num_cols, num_plots):                                        
         st.sidebar.selectbox(f"Axis Y - {i+1}:", num_cols) for i in range(num_plots)
     ]
 
-    if st.button("Refresh"):
+    if st.button("Refresh"):                                                                # Test new lines in the db 
         new_len = len(df[y_list[0]])
         old_len = st.session_state['is_alive']
         st.session_state['is_alive'] = new_len
 
-        if new_len > old_len:
+        if (new_len > old_len) and (old_len != 0):
             with st.status("Checking status...", expanded=False):
                 st.success("The application is Alive!")
                 st.caption(f"Total of metrics: {new_len} — Old metrics: {old_len}")
-        elif new_len < old_len:
+        elif new_len < old_len or (old_len == 0):
             st.warning("New database detected. Please refresh again.")
             st.caption(f"Total of metrics: {new_len} — Old metrics: {old_len}")
         else:
@@ -77,10 +77,13 @@ if db_files:
             st.dataframe(df)
 
             num_cols = df.select_dtypes(include=["number"]).columns.tolist()
-            num_plots = st.sidebar.select_slider(
-                "Select the number of plots",
-                options=[i+1 for i in range(len(num_cols)+1)]
-            )
+            if (len(num_cols) > 0):
+                num_plots = st.sidebar.select_slider(
+                    "Select the number of plots",
+                    options=[i+1 for i in range(len(num_cols)+1)]
+                )
+            else:
+                pass
             # --------
             st.write('---')
             if len(num_cols) >= 2:                                                          # Select columns for the plot
