@@ -15,7 +15,6 @@ def plot_graph(df, num_cols, num_plots):                                        
         st.sidebar.selectbox(f"Axis Y - {i+1}:", num_cols) for i in range(num_plots)
     ]
 
-    # parte não funcionando
     if len(df[x_col])<5000:
         nval = st.select_slider(                                                                
             "Select the number of plots",
