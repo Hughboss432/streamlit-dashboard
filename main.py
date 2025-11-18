@@ -62,9 +62,11 @@ folder = st.sidebar.text_input("Directory path containing the database:", value=
 
 if os.path.isdir(folder):                                                                   # List available db's
     db_files = [f for f in os.listdir(folder) if f.startswith('xapp_db_') and (not f.endswith('-shm')) and (not f.endswith('-wal'))]
+    if len(db_files) == 0:
+        st.warning('Folder does not have a database starting with "xapp_db_".', icon="⚠️")
 else:
     db_files = []
-    st.warning('Path not found or folder does not have a database starting with "xapp_db_".', icon="⚠️")
+    st.warning('Path not found.', icon="⚠️")
 # ------
 if db_files:
     db_selected = st.sidebar.selectbox("Select the database:", db_files)                    # Choose bd
