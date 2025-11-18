@@ -27,6 +27,11 @@ make install
 make run
 ```
 
+Access the page in:
+
+```bash
+http://localhost:8501/
+```
 ---
 
 ## License
