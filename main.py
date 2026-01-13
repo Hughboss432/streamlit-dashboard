@@ -22,7 +22,7 @@ def plot_graph(df, num_cols, num_plots):                                        
         )
     else:
         nval = st.select_slider(                                                                
-            "Select the number of plots",
+            "Select the number of samples for the plot",
             options=[i+1 for i in range(10000)]
         )
 
